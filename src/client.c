@@ -28,8 +28,6 @@ typedef struct urlinfo_t
 */
 urlinfo_t *parse_url(char *url)
 {
-  printf("Here!\n");
-
   // copy the input URL so as not to mutate the original
   char *hostname = strdup(url);
   char *port;
@@ -49,12 +47,19 @@ urlinfo_t *parse_url(char *url)
   */
 
   //hardcode for testing
+  // hostname = "localhost";
+  // port = "3490";
+  // path = "index.html";
 
-  hostname = "localhost";
-  port = "3490";
-  path = "index.html";
-
-
+  char *pntr = strchr(hostname, '/');
+  path = pntr + 1;
+  int end_point = strlen(hostname) - strlen(path) - 1;  
+  hostname[end_point] = '\0';
+  pntr = strchr(hostname, ':');
+  port = pntr + 1;
+  end_point = strlen(hostname) - strlen(port) - 1;
+  hostname[end_point] = '\0';
+     
   urlinfo->hostname = hostname;
   urlinfo->port = port;
   urlinfo->path = path;
