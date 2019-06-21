@@ -53,13 +53,17 @@ urlinfo_t *parse_url(char *url)
 
   char *pntr = strchr(hostname, '/');
   path = pntr + 1;
-  int end_point = strlen(hostname) - strlen(path) - 1;  
+  int end_point = strlen(hostname) - strlen(path) - 1;
   hostname[end_point] = '\0';
   pntr = strchr(hostname, ':');
   port = pntr + 1;
   end_point = strlen(hostname) - strlen(port) - 1;
   hostname[end_point] = '\0';
-     
+
+  printf("Hostname: %s\n", hostname);
+  printf("Port: %s\n", port);
+  printf("Path: %s\n", path);
+
   urlinfo->hostname = hostname;
   urlinfo->port = port;
   urlinfo->path = path;
@@ -84,7 +88,8 @@ int send_request(int fd, char *hostname, char *port, char *path)
 
   int request_length = sprintf(request, "GET /%s HTTP/1.1\n"
                                         "Host: %s:%s\n"
-                                        "Connection: close\n",
+                                        "Connection: close\n"
+                                        "\n",
                                path, hostname, port);
 
   rv = send(fd, request, request_length, 0);
@@ -113,7 +118,6 @@ int main(int argc, char *argv[])
   urlinfo_t *info = parse_url(argv[1]);
   sockfd = get_socket(info->hostname, info->port);
   send_request(sockfd, info->hostname, info->port, info->path);
-
   while ((numbytes = recv(sockfd, buf, BUFSIZE - 1, 0)) > 0)
   {
     fprintf(stdout, "%s", buf);
