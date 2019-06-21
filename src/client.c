@@ -46,23 +46,45 @@ urlinfo_t *parse_url(char *url)
     6. Overwrite the colon with a '\0' so that we are just left with the hostname.
   */
 
-  //hardcode for testing
-  // hostname = "localhost";
-  // port = "3490";
-  // path = "index.html";
+  char *pntr = strstr(hostname, "http://");
+  if (pntr != NULL)
+  {
+    hostname = pntr + 8;
+  }
+  pntr = strstr(hostname, "https://");
+  if (pntr != NULL)
+  {
+    hostname = pntr + 9;
+  }
 
-  char *pntr = strchr(hostname, '/');
-  path = pntr + 1;
-  int end_point = strlen(hostname) - strlen(path) - 1;
-  hostname[end_point] = '\0';
+
+  pntr = strchr(hostname, '/');
+  int end_point;
+  if (pntr == NULL)
+  {
+    path = "/";
+  }
+  else
+  {
+    path = pntr + 1;
+    end_point = strlen(hostname) - strlen(path) - 1;
+    hostname[end_point] = '\0';
+  }
   pntr = strchr(hostname, ':');
-  port = pntr + 1;
-  end_point = strlen(hostname) - strlen(port) - 1;
-  hostname[end_point] = '\0';
+  if (pntr == NULL)
+  {
+    port = "80";
+  }
+  else
+  {
+    port = pntr + 1;
+    end_point = strlen(hostname) - strlen(port) - 1;
+    hostname[end_point] = '\0';
+  }
 
-  printf("Hostname: %s\n", hostname);
-  printf("Port: %s\n", port);
-  printf("Path: %s\n", path);
+  // printf("Hostname: %s\n", hostname);
+  // printf("Port: %s\n", port);
+  // printf("Path: %s\n", path);
 
   urlinfo->hostname = hostname;
   urlinfo->port = port;
